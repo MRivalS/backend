@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookings  Booking[]
+}
+
+model Booking {
+  id          String        @id @default(uuid())
+  bookingCode String        @unique
+  status      BookingStatus @default(MENUNGGU)
+
+  departurePort String
+  arrivalPort   String
+  departureDate DateTime
+  departureTime String
+
+  passengers Int
+  withVehicle Boolean @default(false)
+
+  userId String
+  user   User @relation(fields: [userId], references: [id])
+
+  cancellations Cancellation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model News {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  image     String?
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Promo {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  image       String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model Cancellation {
+  id        String   @id @default(uuid())
+  reason    String
+  status    CancellationStatus @default(PENDING)
+
+  bookingId String
+  booking   Booking @relation(fields: [bookingId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+enum BookingStatus {
+  AKTIF
+  MENUNGGU
+  GAGAL
+  REFUND
+}
+
+enum CancellationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
