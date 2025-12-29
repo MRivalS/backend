@@ -5,14 +5,14 @@ import { RegisterDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
   @Post('register')
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
 
-  @Post('login')
+  @Post('login') // ⬅️ INI WAJIB ADA
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
